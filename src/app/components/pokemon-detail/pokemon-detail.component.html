@@ -1,0 +1,92 @@
+<div class="container">
+  <div class="header">
+    <button class="back-button" (click)="goBack()">← Torna alla lista</button>
+    <h1>Dettagli Pokémon</h1>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Caricamento dettagli del Pokémon...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="pokemon && !loading" class="pokemon-detail">
+    <div class="detail-card">
+      <!-- Header con nome e ID -->
+      <div class="pokemon-header">
+        <div class="pokemon-id">#{{ pokemon.id }}</div>
+        <h1>{{ pokemon.name | uppercase }}</h1>
+      </div>
+
+      <!-- Immagine del Pokémon -->
+      <div class="pokemon-image-section">
+        <img
+          *ngIf="pokemon.sprites.front_default"
+          [src]="pokemon.sprites.front_default"
+          [alt]="pokemon.name"
+          class="pokemon-image"
+        />
+        <p *ngIf="!pokemon.sprites.front_default" class="no-image">
+          Immagine non disponibile
+        </p>
+      </div>
+
+      <!-- Informazioni base -->
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Altezza</label>
+          <span>{{ pokemon.height / 10 }} m</span>
+        </div>
+        <div class="info-item">
+          <label>Peso</label>
+          <span>{{ pokemon.weight / 10 }} kg</span>
+        </div>
+      </div>
+
+      <!-- Tipi -->
+      <div class="types-section">
+        <h2>Tipi</h2>
+        <div class="types-list">
+          <span
+            *ngFor="let type of pokemon.types"
+            class="type-badge"
+            [ngClass]="'type-' + type.type.name"
+          >
+            {{ type.type.name | uppercase }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Abilità -->
+      <div class="abilities-section">
+        <h2>Abilità</h2>
+        <div class="abilities-list">
+          <div *ngFor="let ability of pokemon.abilities" class="ability-item">
+            <span class="ability-name">{{ ability.ability.name }}</span>
+            <span *ngIf="ability.is_hidden" class="hidden-badge">Nascosta</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistiche -->
+      <div class="stats-section">
+        <h2>Statistiche Base</h2>
+        <div class="stats-list">
+          <div *ngFor="let stat of pokemon.stats" class="stat-item">
+            <div class="stat-name">{{ stat.stat.name | uppercase }}</div>
+            <div class="stat-bar">
+              <div
+                class="stat-fill"
+                [style.width.%]="getStatPercentage(stat.base_stat)"
+              ></div>
+            </div>
+            <div class="stat-value">{{ stat.base_stat }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

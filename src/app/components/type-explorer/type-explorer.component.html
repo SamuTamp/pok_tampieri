@@ -1,0 +1,110 @@
+<div class="container">
+  <div class="header">
+    <h1>🔍 Esploratore di Pokémon per Tipo</h1>
+  </div>
+
+  <div class="main-layout">
+    <!-- Sezione dei tipi a sinistra -->
+    <div class="types-sidebar">
+      <h2>Tipi di Pokémon</h2>
+      <div *ngIf="loading && !selectedType" class="loading">
+        Caricamento...
+      </div>
+      <div *ngIf="error && !selectedType" class="error">
+        {{ error }}
+      </div>
+      <div class="types-list">
+        <button
+          *ngFor="let type of pokemonTypes"
+          class="type-button"
+          [class.active]="selectedTypeName === type.name"
+          (click)="selectType(type.name)"
+        >
+          {{ type.name | uppercase }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Sezione dei dettagli a destra -->
+    <div class="details-panel">
+      <div *ngIf="!selectedType && !loading" class="placeholder">
+        Seleziona un tipo per vedere i pokémon
+      </div>
+
+      <div *ngIf="loading && selectedType" class="loading">
+        Caricamento dettagli...
+      </div>
+
+      <div *ngIf="error && selectedType" class="error">
+        {{ error }}
+      </div>
+
+      <div *ngIf="selectedType && !loading" class="type-details">
+        <div class="type-header">
+          <h2>{{ selectedType.name | uppercase }}</h2>
+          <p class="type-id">ID: {{ selectedType.id }}</p>
+        </div>
+
+        <!-- Relazioni di danno -->
+        <div *ngIf="selectedType.damage_relations" class="damage-relations">
+          <div class="relation-group" *ngIf="selectedType.damage_relations.double_damage_from.length > 0">
+            <h3>🔴 Riceve 2x danno da:</h3>
+            <div class="relation-list">
+              <span
+                *ngFor="let type of selectedType.damage_relations.double_damage_from"
+                class="relation-tag damage-high"
+              >
+                {{ type.name }}
+              </span>
+            </div>
+          </div>
+
+          <div class="relation-group" *ngIf="selectedType.damage_relations.half_damage_from.length > 0">
+            <h3>🟢 Riceve 0.5x danno da:</h3>
+            <div class="relation-list">
+              <span
+                *ngFor="let type of selectedType.damage_relations.half_damage_from"
+                class="relation-tag damage-low"
+              >
+                {{ type.name }}
+              </span>
+            </div>
+          </div>
+
+          <div class="relation-group" *ngIf="selectedType.damage_relations.no_damage_from.length > 0">
+            <h3>⚫ Immune da:</h3>
+            <div class="relation-list">
+              <span
+                *ngFor="let type of selectedType.damage_relations.no_damage_from"
+                class="relation-tag damage-immune"
+              >
+                {{ type.name }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista dei Pokémon di questo tipo -->
+        <div class="pokemon-section">
+          <h3>Pokémon di tipo {{ selectedType.name | uppercase }} ({{ selectedType.pokemon.length }})</h3>
+          <div class="pokemon-list">
+            <div
+              *ngFor="let pkmn of selectedType.pokemon.slice(0, 20)"
+              class="pokemon-item"
+            >
+              <a [routerLink]="['/pokemon', getPokemonId(pkmn.pokemon.url)]">
+                <div class="pokemon-info">
+                  <span class="pokemon-name">{{ pkmn.pokemon.name }}</span>
+                  <span class="pokemon-slot">Slot: {{ pkmn.slot }}</span>
+                </div>
+              </a>
+            </div>
+          </div>
+          <p *ngIf="selectedType.pokemon.length > 20" class="more-pokemon">
+            ... e altri {{ selectedType.pokemon.length - 20 }} pokémon
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
