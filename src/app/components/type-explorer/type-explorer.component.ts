@@ -15,29 +15,32 @@ export class TypeExplorerComponent implements OnInit {
   pokemonTypes: PokemonType[] = [];
   selectedType: PokemonTypeDetail | null = null;
   selectedTypeName: string = '';
-  loading: boolean = false;
+  loading: boolean = true;
   error: string = '';
-  typesToShow: number = 10; // Mostrerà i primi 10 tipi
+  typesToShow: number = 10;
 
   constructor(private pokemonService: PokemonService) {}
 
   ngOnInit(): void {
+    console.log('TypeExplorerComponent initialized');
     this.loadPokemonTypes();
   }
 
   loadPokemonTypes(): void {
+    console.log('Loading Pokemon types...');
     this.loading = true;
     this.error = '';
     this.pokemonService.getPokemonTypes().subscribe({
       next: (response) => {
-        // Mostra solo i primi N tipi
+        console.log('Received response:', response);
         this.pokemonTypes = response.results.slice(0, this.typesToShow);
         this.loading = false;
+        console.log('Types loaded successfully:', this.pokemonTypes);
       },
       error: (err) => {
+        console.error('Error loading types:', err);
         this.error = 'Errore nel caricamento dei tipi di pokemon';
         this.loading = false;
-        console.error(err);
       }
     });
   }
@@ -60,7 +63,6 @@ export class TypeExplorerComponent implements OnInit {
   }
 
   getPokemonId(pokemonUrl: string): string {
-    // Estrae l'ID del pokemon dall'URL
     const parts = pokemonUrl.split('/');
     return parts[parts.length - 2];
   }
